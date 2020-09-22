@@ -1,26 +1,45 @@
-import React from 'react';
-import logo from '../../logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Switch, Route, useHistory } from 'react-router-dom';
+import './App.scss';
+import { clients } from '../../data/clients'
+import Home from '../../pages/Home';
+import Client from '../../pages/Client';
+import Header from '../Header/Header';
+import CreateClient from '../../pages/CreateClient';
 
-function App() {
+const App = () => {
+  const [clientsList, setClientsList] = useState(clients);
+  const history = useHistory();
+
+  const addClient = (evt, client) => {
+    evt.preventDefault();
+    client.id = clientsList[clientsList.length - 1].id + 1;
+    setClientsList([...clientsList, client]);
+    history.push("/");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Header/>
+      <Switch>
+        <Route path="/" exact>
+          <Home
+            clientsList={clientsList}
+          />
+        </Route>
+        <Route path="/registration">
+          <CreateClient
+            addClient={addClient}
+          />
+        </Route>
+        <Route path="/client/:id">
+          <Client
+            clientsList={clientsList}
+          />
+        </Route>
+      </Switch>
     </div>
   );
-}
+};
 
 export default App;
